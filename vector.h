@@ -8,7 +8,7 @@ namespace custom{
 
 template<typename T>
 class Vector{
-    private:
+    public:
         T* start{nullptr};
         T* first_unfilled{nullptr};
         int capacity{};
@@ -72,6 +72,7 @@ template <typename T>
 Vector<T>::Vector(std::initializer_list<T> elements){
     capacity = elements.size() * 2;
     start = new T[capacity];
+    first_unfilled = start;
 
     T* copy_start = start;
     for(T element : elements)
@@ -79,21 +80,34 @@ Vector<T>::Vector(std::initializer_list<T> elements){
         *copy_start = element;
         ++copy_start;
     }
-    first_unfilled = copy_start + 1;
+    first_unfilled = (copy_start + 1);
 }
 
 template <typename T>
 Vector<T>::Vector(const Vector<T> &original): capacity{original.capacity}
 {
     start = new T[capacity];
+    first_unfilled = start;
+
     T* start_copy = start;
+    
 
     for(int i = 0; i < original.size(); i++)
     {
         start_copy[i] = original.at(i);
     }
 
+    /*If the original vector had 10 elements, then first_unfilled will not point to element at index 10
+      Which is 1 beyond the last element
+    */
     first_unfilled += original.size();
+}
+
+template <typename T>
+Vector<T>::~Vector()
+{
+    first_unfilled = nullptr;
+    delete[] start;
 }
 
 template <typename T>
@@ -109,7 +123,7 @@ T& Vector<T>::operator[](int index) const {
 
 template <typename T>
 int Vector<T>::size() const {
-    return first_unfilled - start;
+    return first_unfilled - start - 1;
 }
 
 }
