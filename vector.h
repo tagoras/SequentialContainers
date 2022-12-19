@@ -18,8 +18,8 @@ class Vector{
         Vector(std::initializer_list<T>);
 
         Vector(const Vector<T> &);
-        operator=(std::initializer_list<T>);
-        operator=(const Vector<T> &);
+        Vector<T>& operator=(std::initializer_list<T>);
+        Vector<T>& operator=(const Vector<T> &);
 
         ~Vector();
 
@@ -101,6 +101,17 @@ Vector<T>::Vector(const Vector<T> &original): capacity{original.capacity}
       Which is 1 beyond the last element
     */
     first_unfilled += original.size();
+}
+
+template<typename T>
+Vector<T>& Vector<T>::operator=(const Vector<T> &rhs)
+{
+    if(this == &rhs)
+        return *this;
+    
+    delete[] start;
+
+    //for(int i = 0; i < )
 }
 
 template <typename T>
