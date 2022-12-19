@@ -9,18 +9,29 @@ template<typename T>
 class Vector{
     public:
         T* start{nullptr};
-        T* end{nullptr};
         int length{};
 
         // Copy control members
         Vector() = default;
         Vector(std::initializer_list<T>);
+
         Vector(const Vector<T> &);
         operator=(std::initializer_list<T>);
         operator=(const Vector<T> &);
+
         ~Vector();
+
         Vector(const Vector<T> &&);
         operator=(const Vector<T> &&);
+
+        //Iterator retrieval
+        /*
+            Implement functions that give back iterators:
+            begin()
+            end()
+            cbegin()
+            cend()
+        */
 
         //Access Functions
         T& at(int) const;
