@@ -24,7 +24,7 @@ class Vector{
         ~Vector();
 
         Vector(const Vector<T> &&);
-        operator=(const Vector<T> &&);
+        Vector<T>& operator=(const Vector<T> &&);
 
         //Iterator retrieval
         /*
@@ -74,13 +74,11 @@ Vector<T>::Vector(std::initializer_list<T> elements){
     start = new T[capacity];
     first_unfilled = start;
 
-    T* copy_start = start;
     for(T element : elements)
     {
-        *copy_start = element;
-        ++copy_start;
+        *first_unfilled = element;
+        ++first_unfilled;
     }
-    first_unfilled = (copy_start + 1);
 }
 
 template <typename T>
