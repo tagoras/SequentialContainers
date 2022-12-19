@@ -87,12 +87,9 @@ Vector<T>::Vector(const Vector<T> &original): capacity{original.capacity}
     start = new T[capacity];
     first_unfilled = start;
 
-    T* start_copy = start;
-    
-
     for(int i = 0; i < original.size(); i++)
     {
-        start_copy[i] = original.at(i);
+        first_unfilled[i] = original.at(i);
     }
 
     /*If the original vector had 10 elements, then first_unfilled will not point to element at index 10
