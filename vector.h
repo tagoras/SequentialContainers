@@ -7,10 +7,10 @@ namespace custom{
 
 template<typename T>
 class Vector{
-    public:
+    private:
         T* start{nullptr};
         int length{};
-
+    public:
         // Copy control members
         Vector() = default;
         Vector(std::initializer_list<T>);
@@ -78,6 +78,8 @@ Vector<T>::Vector(std::initializer_list<T> elements){
         ++copy_start;
     }
 }
+
+
 
 }
 
