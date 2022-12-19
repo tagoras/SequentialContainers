@@ -2,6 +2,7 @@
 #define VECTOR_H
 
 #include <memory>
+#include <stdexcept>
 
 namespace custom{
 
@@ -71,7 +72,6 @@ template <typename T>
 Vector<T>::Vector(std::initializer_list<T> elements){
     capacity = elements.size() * 2;
     start = new T[capacity];
-    first_unfilled = start + 1;
 
     T* copy_start = start;
     for(T element : elements)
@@ -79,7 +79,7 @@ Vector<T>::Vector(std::initializer_list<T> elements){
         *copy_start = element;
         ++copy_start;
     }
-    first_unfilled = copy_start;
+    first_unfilled = copy_start + 1;
 }
 
 template <typename T>
@@ -94,6 +94,12 @@ Vector<T>::Vector(const Vector<T> &original): capacity{original.capacity}
     }
 
     first_unfilled += original.size();
+}
+
+template <typename T>
+T& Vector<T>::at(int index) const {
+    if(index >= size()) throw std::out_of_range("Tried to access element out of range");
+    return *(start + index);
 }
 
 template <typename T>
