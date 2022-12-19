@@ -9,7 +9,8 @@ template<typename T>
 class Vector{
     private:
         T* start{nullptr};
-        int length{};
+        T* first_unfilled{nullptr};
+        int capacity{};
     public:
         // Copy control members
         Vector() = default;
@@ -68,8 +69,9 @@ class Vector{
 
 template <typename T>
 Vector<T>::Vector(std::initializer_list<T> elements){
-    length = elements.size();
-    start = new T[length * 2];
+    capacity = elements.size() * 2;
+    start = new T[capacity];
+    first_unfilled = start + 1;
 
     T* copy_start = start;
     for(T element : elements)
@@ -77,9 +79,32 @@ Vector<T>::Vector(std::initializer_list<T> elements){
         *copy_start = element;
         ++copy_start;
     }
+    first_unfilled = copy_start;
 }
 
+template <typename T>
+Vector<T>::Vector(const Vector<T> &original): capacity{original.capacity}
+{
+    start = new T[capacity];
+    T* start_copy = start;
 
+    for(int i = 0; i < original.size(); i++)
+    {
+        start_copy[i] = original.at(i);
+    }
+
+    first_unfilled += original.size();
+}
+
+template <typename T>
+T& Vector<T>::operator[](int index) const {
+    return *(start + index);
+}
+
+template <typename T>
+int Vector<T>::size() const {
+    return first_unfilled - start;
+}
 
 }
 
