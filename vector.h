@@ -147,7 +147,10 @@ Vector<T>::~Vector()
     //first_unfilled = nullptr;
     delete[] start;
 }
-
+/*
+    Move assignment operator. Copies capacity into the vector and transfers ownership from one vector to another.
+    The moved-from vector's start and first_unfilled pointers are set to nullptr and capacity of 0
+*/
 template<typename T>
 Vector<T>::Vector(Vector<T> &&original): capacity{original.capacity}
 {
