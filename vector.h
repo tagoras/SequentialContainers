@@ -24,7 +24,7 @@ class Vector{
         ~Vector(); // +
 
         Vector(Vector<T> &&);
-        Vector<T>& operator=(const Vector<T> &&);
+        Vector<T>& operator=(Vector<T> &&);
 
         //Iterator retrieval
         /*
@@ -160,6 +160,24 @@ Vector<T>::Vector(Vector<T> &&original): capacity{original.capacity}
     original.capacity = 0;
     original.start = nullptr;
     original.first_unfilled = nullptr;
+}
+
+template<typename T>
+Vector<T>& Vector<T>::operator=(Vector<T> &&original)
+{
+    if(this == &original)
+        return *this;
+
+    // Now same as in move constructor
+
+    start = original.start;
+    first_unfilled = original.first_unfilled;
+
+    original.capacity = 0;
+    original.start = nullptr;
+    original.first_unfilled = nullptr;
+
+    return *this;    
 }
 
 template <typename T>
