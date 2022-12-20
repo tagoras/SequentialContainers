@@ -14,17 +14,17 @@ class Vector{
         int capacity{};
     public:
         // Copy control members
-        Vector() = default;
-        Vector(std::initializer_list<T>);
+        Vector() = default; // +
+        Vector(std::initializer_list<T>); // +
 
-        Vector(const Vector<T> &);
+        Vector(const Vector<T> &); // +
         Vector<T>& operator=(std::initializer_list<T>);
         Vector<T>& operator=(const Vector<T> &);
 
         ~Vector();
 
         Vector(const Vector<T> &&);
-        operator=(const Vector<T> &&);
+        Vector<T>& operator=(const Vector<T> &&);
 
         //Iterator retrieval
         /*
@@ -66,6 +66,9 @@ class Vector{
         void resize();
 
         void swap(const Vector<T> other);
+
+        template <T>
+        friend std::ostream& operator<<(std::ostream &os, const Vector<T> vec);
 };
 
 template <typename T>
@@ -92,7 +95,7 @@ Vector<T>::Vector(const Vector<T> &original): capacity{original.capacity}
         first_unfilled[i] = original.at(i);
     }
 
-    /*If the original vector had 10 elements, then first_unfilled will not point to element at index 10
+    /*If the original vector had 10 elements, then first_unfilled will now point to element at index 10
       Which is 1 beyond the last element
     */
     first_unfilled += original.size();
@@ -106,13 +109,26 @@ Vector<T>& Vector<T>::operator=(const Vector<T> &rhs)
     
     delete[] start;
 
-    //for(int i = 0; i < )
+    capacity = rhs.capacity;
+    start = new T[capacity];
+    // first_unfilled previously pointed to deallocated memory, now points to start
+    first_unfilled = start;
+
+    for(int i = 0; i < rhs.size(); i++)
+    {
+        start[i] = rhs.start[i];
+    }
+    // Have to use other object for size because size() function works by subtracting start from first_unfilled
+    first_unfilled += rhs.size();
+
+    return *this;
 }
 
 template <typename T>
 Vector<T>::~Vector()
-{
-    first_unfilled = nullptr;
+{   
+    // Don't think setting first_unfilled to nullptr is necessary
+    //first_unfilled = nullptr;
     delete[] start;
 }
 
@@ -129,7 +145,17 @@ T& Vector<T>::operator[](int index) const {
 
 template <typename T>
 int Vector<T>::size() const {
-    return first_unfilled - start - 1;
+    return first_unfilled - start;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream &os, const Vector<T> vec)
+{
+    for(int i = 0; i < vec.size(); i++)
+    {
+        os << vec[i] << " ";
+    }
+    return os;
 }
 
 }
