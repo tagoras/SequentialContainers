@@ -23,8 +23,8 @@ class Vector{
 
         ~Vector(); // +
 
-        Vector(Vector<T> &&);
-        Vector<T>& operator=(Vector<T> &&);
+        Vector(Vector<T> &&); // +
+        Vector<T>& operator=(Vector<T> &&); // +
 
         //Iterator retrieval
         /*
@@ -148,12 +148,13 @@ Vector<T>::~Vector()
     delete[] start;
 }
 /*
-    Move assignment operator. Copies capacity into the vector and transfers ownership from one vector to another.
+    Move constructor. Copies capacity into the vector and transfers ownership from one vector to another.
     The moved-from vector's start and first_unfilled pointers are set to nullptr and capacity of 0
 */
 template<typename T>
 Vector<T>::Vector(Vector<T> &&original): capacity{original.capacity}
 {
+    std::cout << "Move constructor applied" << std::endl;
     start = original.start;
     first_unfilled = original.first_unfilled;
 
@@ -162,9 +163,14 @@ Vector<T>::Vector(Vector<T> &&original): capacity{original.capacity}
     original.first_unfilled = nullptr;
 }
 
+/*
+    Move assignment operator. Works like ^ move constructor but returns a reference to this object and guards against
+    self assignment.
+*/
 template<typename T>
 Vector<T>& Vector<T>::operator=(Vector<T> &&original)
 {
+    std::cout << "Coppy assignment operator applied" << std::endl;
     if(this == &original)
         return *this;
 
