@@ -21,9 +21,9 @@ class Vector{
         Vector<T>& operator=(std::initializer_list<T>); // +
         Vector<T>& operator=(const Vector<T> &); // +
 
-        ~Vector();
+        ~Vector(); // +
 
-        Vector(const Vector<T> &&);
+        Vector(Vector<T> &&);
         Vector<T>& operator=(const Vector<T> &&);
 
         //Iterator retrieval
@@ -146,6 +146,17 @@ Vector<T>::~Vector()
     // Don't think setting first_unfilled to nullptr is necessary
     //first_unfilled = nullptr;
     delete[] start;
+}
+
+template<typename T>
+Vector<T>::Vector(Vector<T> &&original): capacity{original.capacity}
+{
+    start = original.start;
+    first_unfilled = original.first_unfilled;
+
+    original.capacity = 0;
+    original.start = nullptr;
+    original.first_unfilled = nullptr;
 }
 
 template <typename T>
