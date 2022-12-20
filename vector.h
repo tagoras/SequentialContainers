@@ -18,8 +18,8 @@ class Vector{
         Vector(std::initializer_list<T>); // +
 
         Vector(const Vector<T> &); // +
-        Vector<T>& operator=(std::initializer_list<T>);
-        Vector<T>& operator=(const Vector<T> &);
+        Vector<T>& operator=(std::initializer_list<T>); // +
+        Vector<T>& operator=(const Vector<T> &); // +
 
         ~Vector();
 
@@ -122,6 +122,22 @@ Vector<T>& Vector<T>::operator=(const Vector<T> &rhs)
     first_unfilled += rhs.size();
 
     return *this;
+}
+
+template<typename T>
+Vector<T>& Vector<T>::operator=(std::initializer_list<T> elements)
+{
+    delete[] start;
+    
+    capacity = 2 * elements.size();
+    start = new T[capacity];
+    first_unfilled = start;
+
+    for(T element : elements)
+    {
+        *first_unfilled = element;
+        first_unfilled++;
+    }
 }
 
 template <typename T>
