@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <stdexcept>
+#include "Iterator.h"
 
 namespace custom{
 
@@ -34,16 +35,18 @@ class Vector{
             cbegin()
             cend()
         */
+        Iterator<T> begin() const;
+        Iterator<T> end() const;
 
         //Access Functions
-        T& at(int) const;
-        T& operator[](int) const;
+        T& at(int) const; // +
+        T& operator[](int) const; // +
         T& front() const;
         T& back() const;
 
         // Capacity Functions
         bool empty() const;
-        int size() const;
+        int size() const; // +
         int max_size() const;
         void reserve();
         void shrink_to_fit();
@@ -184,6 +187,16 @@ Vector<T>& Vector<T>::operator=(Vector<T> &&original)
     original.first_unfilled = nullptr;
 
     return *this;    
+}
+
+template<typename T>
+Iterator<T> Vector<T>::begin() const{
+    return Iterator<T>{start};
+}
+
+template<typename T>
+Iterator<T> Vector<T>::end() const{
+    return Iterator<T>{first_unfilled};
 }
 
 template <typename T>
