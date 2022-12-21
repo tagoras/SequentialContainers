@@ -75,6 +75,20 @@ Iterator<T> Iterator<T>::operator++(int)
 Below is a const implementation of Iterator
 */
 
+/*
 
+There are some issues with the implementation of const iterator
+template<typename T>
+class Const_Iterator : public Iterator<T>{
+    public:
+        Const_Iterator(T* pointer): Iterator<T>{pointer} {}
+        const T& operator*();
+};
 
+template<typename T>
+const T& Const_Iterator<T>::operator*()
+{
+    return getElement();
+}
+*/
 #endif
