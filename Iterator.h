@@ -19,10 +19,8 @@ class Iterator{
     Iterator& operator++();
     Iterator operator++(int);
 
-    template <T>
     friend bool operator==(const Iterator<T> &lhs, const Iterator<T> &rhs);
 
-    template<T>
     friend bool operator!=(const Iterator<T> &lhs, const Iterator<T> &rhs);
 
     T* getElement() const;
