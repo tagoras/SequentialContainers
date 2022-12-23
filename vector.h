@@ -37,6 +37,8 @@ class Vector{
         */
         Iterator<T> begin() const;
         Iterator<T> end() const;
+        Const_Iterator<T> cbegin() const;
+        Const_Iterator<T> cend() const;
 
         //Access Functions
         T& at(int) const; // +
@@ -197,6 +199,16 @@ Iterator<T> Vector<T>::begin() const{
 template<typename T>
 Iterator<T> Vector<T>::end() const{
     return Iterator<T>{first_unfilled};
+}
+
+template<typename T>
+Const_Iterator<T> Vector<T>::cbegin() const{
+    return Const_Iterator<T>{start};
+}
+
+template<typename T>
+Const_Iterator<T> Vector<T>::cend() const {
+    return Const_Iterator<T>{first_unfilled};
 }
 
 template <typename T>
