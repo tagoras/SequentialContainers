@@ -10,6 +10,9 @@ namespace custom{
 template<typename T>
 class Vector{
     public:
+        using iterator = Iterator<T>;
+        using const_iterator = Const_Iterator<T>;
+    public:
         T* start{nullptr};
         T* first_unfilled{nullptr};
         int capacity{};
@@ -35,10 +38,10 @@ class Vector{
             cbegin()
             cend()
         */
-        Iterator<T> begin() const;
-        Iterator<T> end() const;
-        Const_Iterator<T> cbegin() const;
-        Const_Iterator<T> cend() const;
+        iterator begin() const; // +
+        iterator end() const; // +
+        const_iterator cbegin() const; // +
+        const_iterator cend() const; // +
 
         //Access Functions
         T& at(int) const; // +
@@ -70,7 +73,7 @@ class Vector{
         T pop_back();
         void resize();
 
-        void swap(const Vector<T> other);
+        void swap(const Vector<T> &other);
 
         template <T>
         friend std::ostream& operator<<(std::ostream &os, const Vector<T> vec);
@@ -235,6 +238,12 @@ std::ostream& operator<<(std::ostream &os, const Vector<T> vec)
         os << vec[i] << " ";
     }
     return os;
+}
+
+template<typename T>
+void Vector<T>::resize()
+{
+    capacity *= 2;
 }
 
 }
