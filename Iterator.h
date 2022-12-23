@@ -19,10 +19,15 @@ class Iterator{
     Iterator& operator++();
     Iterator operator++(int);
 
+<<<<<<< HEAD
     /*
         In the following template friend functions the typename is always gonna match T, but simply writing
         template<typename T> will say that T is shadowed. Therefore, declaring U is just work around.
     */
+=======
+    /*Compiler was previously complaining that I was defining a non-templated member function, trying to define 
+    a member function with template<typename T> shadows the above defined T variable. In reality, T and U will always match*/
+>>>>>>> vector
     template<typename U>
     friend bool operator==(const Iterator<U> &lhs, const Iterator<U> &rhs);
 
@@ -80,8 +85,6 @@ Below is a const implementation of Iterator
 */
 
 
-
-//There are some issues with the implementation of const iterator
 template<typename T>
 class Const_Iterator : public Iterator<T>{
     public:
@@ -89,7 +92,8 @@ class Const_Iterator : public Iterator<T>{
         const T& operator*();
 };
 
-// Removing Const_Iterator<T>:: from the return statement causes a compile time error
+
+// Removing Const_Iterator<T>:: from return causes compile time error
 template<typename T>
 const T& Const_Iterator<T>::operator*()
 {

@@ -10,6 +10,9 @@ namespace custom{
 template<typename T>
 class Vector{
     public:
+        using iterator = Iterator<T>;
+        using const_iterator = Const_Iterator<T>;
+    public:
         T* start{nullptr};
         T* first_unfilled{nullptr};
         int capacity{};
@@ -35,8 +38,10 @@ class Vector{
             cbegin()
             cend()
         */
-        Iterator<T> begin() const;
-        Iterator<T> end() const;
+        iterator begin() const; // +
+        iterator end() const; // +
+        const_iterator cbegin() const; // +
+        const_iterator cend() const; // +
 
         //Access Functions
         T& at(int) const; // +
@@ -66,9 +71,9 @@ class Vector{
         void push_back(const Vector<T> &other);
 
         T pop_back();
-        void resize();
+        void resize(); // +
 
-        void swap(const Vector<T> other);
+        void swap(const Vector<T> &other);
 
         template <T>
         friend std::ostream& operator<<(std::ostream &os, const Vector<T> vec);
@@ -199,6 +204,16 @@ Iterator<T> Vector<T>::end() const{
     return Iterator<T>{first_unfilled};
 }
 
+template<typename T>
+Const_Iterator<T> Vector<T>::cbegin() const{
+    return Const_Iterator<T>{start};
+}
+
+template<typename T>
+Const_Iterator<T> Vector<T>::cend() const {
+    return Const_Iterator<T>{first_unfilled};
+}
+
 template <typename T>
 T& Vector<T>::at(int index) const {
     if(index >= size()) throw std::out_of_range("Tried to access element out of range");
@@ -223,6 +238,60 @@ std::ostream& operator<<(std::ostream &os, const Vector<T> vec)
         os << vec[i] << " ";
     }
     return os;
+}
+
+template<typename T>
+void Vector<T>::resize()
+{
+    capacity *= 2;
+    // If vector was default initialized multiplication of capacity will not change the capacity
+    if(!capacity) capacity = 10;
+
+    T* new_begin = new T[capacity];
+    T* new_first_unfilled = new_begin;
+
+    
+    for(T& element : *this)
+    {
+        *new_first_unfilled = element;
+        new_first_unfilled++;
+    }
+
+    delete[] start;
+    start = new_begin;
+
+    first_unfilled = new_first_unfilled;
+}
+
+template<typename T>
+void Vector<T>::push_back(const T &element)
+{
+    if(size() == capacity) resize();
+    
+    *first_unfilled = element;
+    first_unfilled++;
+}       
+
+template<typename T>
+void Vector<T>::push_back(std::initializer_list<T> elements)
+{
+    for(T& element: elements)
+    {
+        if(size() == capacity) resize();
+        *first_unfilled = element;
+        first_unfilled++;
+    }
+}
+        
+template<typename T>
+void Vector<T>::push_back(const Vector<T> &other)
+{
+    for(T& element : other)
+    {
+        if(size() == capacity) resize();
+        *first_unfilled = element;
+        first_unfilled++;
+    }
 }
 
 }
