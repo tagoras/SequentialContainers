@@ -19,9 +19,13 @@ class Iterator{
     Iterator& operator++();
     Iterator operator++(int);
 
-    friend bool operator==(const Iterator<T> &lhs, const Iterator<T> &rhs);
+    /*Compiler was previously complaining that I was defining a non-templated member function, trying to define 
+    a member function with template<typename T> shadows the above defined T variable. In reality, T and U will always match*/
+    template<typename U>
+    friend bool operator==(const Iterator<U> &lhs, const Iterator<U> &rhs);
 
-    friend bool operator!=(const Iterator<T> &lhs, const Iterator<T> &rhs);
+    template<typename U>
+    friend bool operator!=(const Iterator<U> &lhs, const Iterator<U> &rhs);
 
     T* getElement() const;
 
