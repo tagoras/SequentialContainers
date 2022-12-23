@@ -4,15 +4,16 @@
 
 int main()
 {
-    custom::Vector<int> numbers{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    custom::Vector<int> numbers2{std::move(numbers)};
-    
-    for(int element : numbers2)
+    custom::Vector<int> ivec;
+
+    int *p1 = nullptr, *p2 = nullptr;
+
+    for(int i = 0; i < 100; i++)
     {
-        std::cout << element << " ";
+        ivec.push_back(i);
     }
 
-    
+    std::cout << ivec << std::endl;
 
     return 0;
 }
