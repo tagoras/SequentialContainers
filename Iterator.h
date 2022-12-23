@@ -73,9 +73,7 @@ Iterator<T> Iterator<T>::operator++(int)
 Below is a const implementation of Iterator
 */
 
-/*
 
-There are some issues with the implementation of const iterator
 template<typename T>
 class Const_Iterator : public Iterator<T>{
     public:
@@ -83,10 +81,12 @@ class Const_Iterator : public Iterator<T>{
         const T& operator*();
 };
 
+
+// Removing Const_Iterator<T>:: from return causes compile time error
 template<typename T>
 const T& Const_Iterator<T>::operator*()
 {
-    return getElement();
+    return Const_Iterator<T>::getElement();
 }
-*/
+
 #endif
