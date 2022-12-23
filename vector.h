@@ -71,7 +71,7 @@ class Vector{
         void push_back(const Vector<T> &other);
 
         T pop_back();
-        void resize();
+        void resize(); // +
 
         void swap(const Vector<T> &other);
 
@@ -244,16 +244,54 @@ template<typename T>
 void Vector<T>::resize()
 {
     capacity *= 2;
+    // If vector was default initialized multiplication of capacity will not change the capacity
+    if(!capacity) capacity = 10;
 
     T* new_begin = new T[capacity];
     T* new_first_unfilled = new_begin;
 
+    
     for(T& element : *this)
     {
         *new_first_unfilled = element;
         new_first_unfilled++;
     }
 
+    delete[] start;
+    start = new_begin;
+
+    first_unfilled = new_first_unfilled;
+}
+
+template<typename T>
+void Vector<T>::push_back(const T &element)
+{
+    if(size() == capacity) resize();
+    
+    *first_unfilled = element;
+    first_unfilled++;
+}       
+
+template<typename T>
+void Vector<T>::push_back(std::initializer_list<T> elements)
+{
+    for(T& element: elements)
+    {
+        if(size() == capacity) resize();
+        *first_unfilled = element;
+        first_unfilled++;
+    }
+}
+        
+template<typename T>
+void Vector<T>::push_back(const Vector<T> &other)
+{
+    for(T& element : other)
+    {
+        if(size() == capacity) resize();
+        *first_unfilled = element;
+        first_unfilled++;
+    }
 }
 
 }
