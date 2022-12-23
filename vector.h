@@ -244,6 +244,16 @@ template<typename T>
 void Vector<T>::resize()
 {
     capacity *= 2;
+
+    T* new_begin = new T[capacity];
+    T* new_first_unfilled = new_begin;
+
+    for(T& element : *this)
+    {
+        *new_first_unfilled = element;
+        new_first_unfilled++;
+    }
+
 }
 
 }
