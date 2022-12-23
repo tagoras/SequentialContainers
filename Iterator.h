@@ -19,9 +19,15 @@ class Iterator{
     Iterator& operator++();
     Iterator operator++(int);
 
-    friend bool operator==(const Iterator<T> &lhs, const Iterator<T> &rhs);
+    /*
+        In the following template friend functions the typename is always gonna match T, but simply writing
+        template<typename T> will say that T is shadowed. Therefore, declaring U is just work around.
+    */
+    template<typename U>
+    friend bool operator==(const Iterator<U> &lhs, const Iterator<U> &rhs);
 
-    friend bool operator!=(const Iterator<T> &lhs, const Iterator<T> &rhs);
+    template<typename U>
+    friend bool operator!=(const Iterator<U> &lhs, const Iterator<U> &rhs);
 
     T* getElement() const;
 
@@ -73,9 +79,9 @@ Iterator<T> Iterator<T>::operator++(int)
 Below is a const implementation of Iterator
 */
 
-/*
 
-There are some issues with the implementation of const iterator
+
+//There are some issues with the implementation of const iterator
 template<typename T>
 class Const_Iterator : public Iterator<T>{
     public:
@@ -83,10 +89,11 @@ class Const_Iterator : public Iterator<T>{
         const T& operator*();
 };
 
+// Removing Const_Iterator<T>:: from the return statement causes a compile time error
 template<typename T>
 const T& Const_Iterator<T>::operator*()
 {
-    return getElement();
+    return Const_Iterator<T>::getElement();
 }
-*/
+
 #endif
