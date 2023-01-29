@@ -3,20 +3,17 @@
 
 #include <memory>
 #include <stdexcept>
-#include "Iterator.h"
 
 namespace custom{
 
 template<typename T>
 class Vector{
     public:
-        using iterator = Iterator<T>;
-        using const_iterator = Const_Iterator<T>;
-    public:
+    
         T* start{nullptr};
         T* first_unfilled{nullptr};
         int capacity{};
-    public:
+    
         // Copy control members
         Vector() = default; // +
         Vector(std::initializer_list<T>); // +
@@ -38,10 +35,10 @@ class Vector{
             cbegin()
             cend()
         */
-        iterator begin() const; // +
-        iterator end() const; // +
-        const_iterator cbegin() const; // +
-        const_iterator cend() const; // +
+        iterator begin() const; 
+        iterator end() const; 
+        const_iterator cbegin() const; 
+        const_iterator cend() const; 
 
         //Access Functions
         T& at(int) const; // +
@@ -192,26 +189,6 @@ Vector<T>& Vector<T>::operator=(Vector<T> &&original)
     original.first_unfilled = nullptr;
 
     return *this;    
-}
-
-template<typename T>
-Iterator<T> Vector<T>::begin() const{
-    return Iterator<T>{start};
-}
-
-template<typename T>
-Iterator<T> Vector<T>::end() const{
-    return Iterator<T>{first_unfilled};
-}
-
-template<typename T>
-Const_Iterator<T> Vector<T>::cbegin() const{
-    return Const_Iterator<T>{start};
-}
-
-template<typename T>
-Const_Iterator<T> Vector<T>::cend() const {
-    return Const_Iterator<T>{first_unfilled};
 }
 
 template <typename T>
