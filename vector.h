@@ -141,7 +141,7 @@ class Vector{
         void push_back(const Vector<T> &other);
 
         T pop_back();
-        void resize(); // +
+        void resize(int count = -1);
 
         void swap(const Vector<T> &other);
 
@@ -376,20 +376,25 @@ std::ostream& operator<<(std::ostream &os, const Vector<T> vec)
     space to the new memory space and then tweaking the member pointers in the end.
 */
 template<typename T>
-void Vector<T>::resize()
+void Vector<T>::resize(int count)
 {
-    capacity = (capacity + 1) * 2;
+    if(count == -1) capacity = (capacity + 1) * 2;
+    else capacity = count;
 
     T* new_m_start = new T[capacity];
     T* new_m_first_unfilled = new_m_start;
 
     const_iterator beg{cbegin()}, end{cend()};
 
-    while(beg != end)
+    // In case the container is truncated, we have to make sure that we do not overflow the allocated memory
+    int k = 0;
+
+    while(beg != end && k < count)
     {
         *new_m_first_unfilled = *beg;
         ++new_m_first_unfilled;
         ++beg;
+        ++k;
     }
 
     delete[] m_start;
