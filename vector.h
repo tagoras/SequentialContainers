@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <stdexcept>
+#include <utility>
 
 namespace custom{
 
@@ -21,7 +22,7 @@ class Vector{
     
         T* start{nullptr};
         T* first_unfilled{nullptr};
-        int capacity{};
+        int capacity{0};
     
         // Copy control members
         Vector() = default; // +
@@ -85,13 +86,18 @@ class Vector{
         friend std::ostream& operator<<(std::ostream &os, const Vector<T> vec);
 };
 
-template <typename T>
-Vector<T>::Vector(std::initializer_list<T> elements){
-    capacity = elements.size() * 2;
-    start = new T[capacity];
-    first_unfilled = start;
+/*
+    Constructor that initializes the vector from std::initializer_list (to allow brace-list initialization).
+    
+    Initialises the capacity to double of the number of elements in the initializer list. Allocates memory for
+    capacity elements and then copies each element in the initializer list. After 
+*/
 
-    for(T element : elements)
+template <typename T>
+Vector<T>::Vector(std::initializer_list<T> elements): capacity{elements.size() * 2},
+    start{new T[capacity]}, first_unfilled{start} 
+{
+    for(T& element : elements)
     {
         *first_unfilled = element;
         ++first_unfilled;
@@ -229,18 +235,14 @@ std::ostream& operator<<(std::ostream &os, const Vector<T> vec)
 template<typename T>
 void Vector<T>::resize()
 {
-    capacity *= 2;
-    // If vector was default initialized multiplication of capacity will not change the capacity
-    if(!capacity) capacity = 10;
+    capacity = (capacity + 1) * 2;
 
     T* new_begin = new T[capacity];
     T* new_first_unfilled = new_begin;
 
-    
-    for(T& element : *this)
+    for(; new_first_unfilled != first_unfilled; ++beg)
     {
-        *new_first_unfilled = element;
-        new_first_unfilled++;
+        *new_first_unfilled = *
     }
 
     delete[] start;
