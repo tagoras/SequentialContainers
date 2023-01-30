@@ -167,6 +167,9 @@ Vector<T>::Vector(std::initializer_list<T> elements): capacity{elements.size() *
     }
 }
 
+template <typename T>
+Vector<T>::Vector(int size): capacity{size}, m_start{new T[size]}, m_first_unfilled{m_start} {}
+
 /*
     Copy constructor. After copying the elements we move the m_first_unfilled by the size of the original
     vector so that m_first_unfilled now points to the first empty memory location
@@ -368,10 +371,31 @@ std::ostream& operator<<(std::ostream &os, const Vector<T> vec)
     return os;
 }
 
+/*
+    Resizes the current container by allocating two times more memory and copying each element from the old memory
+    space to the new memory space and then tweaking the member pointers in the end.
+*/
 template<typename T>
 void Vector<T>::resize()
 {
     capacity = (capacity + 1) * 2;
+
+    T* new_m_start = new T[capacity];
+    T* new_m_first_unfilled = new_m_start;
+
+    const_iterator beg{cbegin()}, end{cend()};
+
+    while(beg != end)
+    {
+        *new_m_first_unfilled = *beg;
+        ++new_m_first_unfilled;
+        ++beg;
+    }
+
+    delete[] m_start;
+
+    m_start = new_m_start;
+    m_first_unfilled = new_m_first_unfilled;
 }
 
 template<typename T>
