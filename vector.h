@@ -7,18 +7,65 @@
 
 namespace custom{
 
-    /*
-        This is a high-level generic vector class that attempts to provide the core functionality that is 
-        provided in the STL Vector container class.
+template<typename T>
+class Iterator{
+    public:
+        using iterator_category =  std::bidirectional_iterator_tag;
 
-        T* start; denotes the memory location of the first element
-        T* first_unfilled; denotes the memory location of the first empty memory address
-        int capacity; the total amount of elements the container can currently hold
-    */
+        Iterator(T* element_pointer);
+
+        T& operator*() const {return *m_pointer;}
+        T* operator->();
+
+        Iterator& operator++() { ++m_pointer; return *this; }
+
+        Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
+
+        Iterator& operator--() {--m_pointer; return *this; }
+
+        Iterator operator--(int) {Iterator tmp = *this; --(*this); return tmp;}
+
+        friend bool operator==(const Iterator<T> &lhs, const Iterator<T> &rhs);
+        friend bool operator!=(const Iterator<T> &lhs, const Iterator<T> &rhs);
+    private:
+        T* m_pointer;
+};
+
+template<typename T>
+Iterator<T>::Iterator(T* element_pointer): m_pointer{element_pointer} {}
+
+template<typename T>
+bool operator==(const Iterator<T> &lhs, const Iterator<T> &rhs) {return lhs.m_pointer == rhs.m_pointer;}
+
+template<typename T>
+bool operator!=(const Iterator<T> &lhs, const Iterator<T> &rhs) {return lhs.m_pointer != rhs.m_pointer;}
+
+/*
+    This is a high-level generic vector class that attempts to provide the core functionality that is 
+    provided in the STL Vector container class.
+
+    T* start; denotes the memory location of the first element
+    T* first_unfilled; denotes the memory location of the first empty memory address
+    int capacity; the total amount of elements the container can currently hold
+*/
+
+template<typename T>
+class Constant_Iterator : public Iterator<T>{
+    public:
+        Constant_Iterator(T* element_pointer);
+
+        const T& operator*() const {return *m_pointer;}
+};
+
+template<typename T>
+Constant_Iterator<T>::Constant_Iterator(T* element_pointer): Iterator{element_pointer} {}
 
 template<typename T>
 class Vector{
     public:
+        using iterator = Iterator;
+        using const_iterator = Constant_Iterator;
+
         int capacity{0};
         T* start{nullptr};
         T* first_unfilled{nullptr};
