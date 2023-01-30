@@ -19,10 +19,9 @@ namespace custom{
 template<typename T>
 class Vector{
     public:
-    
+        int capacity{0};
         T* start{nullptr};
         T* first_unfilled{nullptr};
-        int capacity{0};
     
         // Copy control members
         Vector() = default; // +
@@ -104,19 +103,23 @@ Vector<T>::Vector(std::initializer_list<T> elements): capacity{elements.size() *
     }
 }
 
-template <typename T>
-Vector<T>::Vector(const Vector<T> &original): capacity{original.capacity}
-{
-    start = new T[capacity];
-    first_unfilled = start;
+/*
+    Copy constructor. After copying the elements we move the first_unfilled by the size of the original
+    vector so that first_unfilled now points to the first empty memory location
+*/
 
+template <typename T>
+Vector<T>::Vector(const Vector<T> &original): capacity{original.capacity}, start{new T[capacity]},
+first_unfilled{start}
+{
     for(int i = 0; i < original.size(); i++)
     {
         first_unfilled[i] = original.at(i);
     }
 
-    /*If the original vector had 10 elements, then first_unfilled will now point to element at index 10
-      Which is 1 beyond the last element
+    /*
+        If the original vector had 10 elements, then first_unfilled will now point to element at index 10
+        Which is 1 beyond the last element
     */
     first_unfilled += original.size();
 }
