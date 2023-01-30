@@ -44,8 +44,8 @@ bool operator!=(const Iterator<T> &lhs, const Iterator<T> &rhs) {return lhs.m_po
     This is a high-level generic vector class that attempts to provide the core functionality that is 
     provided in the STL Vector container class.
 
-    T* start; denotes the memory location of the first element
-    T* first_unfilled; denotes the memory location of the first empty memory address
+    T* m_start; denotes the memory location of the first element
+    T* m_first_unfilled; denotes the memory location of the first empty memory address
     int capacity; the total amount of elements the container can currently hold
 */
 
@@ -63,12 +63,12 @@ Constant_Iterator<T>::Constant_Iterator(T* element_pointer): Iterator{element_po
 template<typename T>
 class Vector{
     public:
-        using iterator = Iterator;
-        using const_iterator = Constant_Iterator;
+        using iterator = Iterator<T>;
+        using const_iterator = Constant_Iterator<T>;
 
         int capacity{0};
-        T* start{nullptr};
-        T* first_unfilled{nullptr};
+        T* m_start{nullptr};
+        T* m_first_unfilled{nullptr};
     
         // Copy control members
         Vector() = default; // +
@@ -117,7 +117,7 @@ class Vector{
         
         T erase(const T &);
         T erase(int pos);
-        T erase(int start, int end);
+        T erase(int m_start, int end);
 
         void push_back(const T &);
         void push_back(std::initializer_list<T> elements);
@@ -141,34 +141,34 @@ class Vector{
 
 template <typename T>
 Vector<T>::Vector(std::initializer_list<T> elements): capacity{elements.size() * 2},
-    start{new T[capacity]}, first_unfilled{start} 
+    m_start{new T[capacity]}, m_first_unfilled{m_start} 
 {
     for(T& element : elements)
     {
-        *first_unfilled = element;
-        ++first_unfilled;
+        *m_first_unfilled = element;
+        ++m_first_unfilled;
     }
 }
 
 /*
-    Copy constructor. After copying the elements we move the first_unfilled by the size of the original
-    vector so that first_unfilled now points to the first empty memory location
+    Copy constructor. After copying the elements we move the m_first_unfilled by the size of the original
+    vector so that m_first_unfilled now points to the first empty memory location
 */
 
 template <typename T>
-Vector<T>::Vector(const Vector<T> &original): capacity{original.capacity}, start{new T[capacity]},
-first_unfilled{start}
+Vector<T>::Vector(const Vector<T> &original): capacity{original.capacity}, m_start{new T[capacity]},
+m_first_unfilled{m_start}
 {
     for(int i = 0; i < original.size(); i++)
     {
-        first_unfilled[i] = original.at(i);
+        m_first_unfilled[i] = original.at(i);
     }
 
     /*
-        If the original vector had 10 elements, then first_unfilled will now point to element at index 10
+        If the original vector had 10 elements, then m_first_unfilled will now point to element at index 10
         Which is 1 beyond the last element
     */
-    first_unfilled += original.size();
+    m_first_unfilled += original.size();
 }
 
 /*
@@ -181,17 +181,17 @@ first_unfilled{start}
 template<typename T>
 Vector<T>& Vector<T>::operator=(std::initializer_list<T> elements)
 {
-    delete[] start;
+    delete[] m_start;
     
     // Add one before multiplying in case vector is assigned to empty list i.e. {}
     capacity = 2 * (elements.size() + 1);
-    start = new T[capacity];
-    first_unfilled = start;
+    m_start = new T[capacity];
+    m_first_unfilled = m_start;
 
     for(T& element : elements)
     {
-        *first_unfilled = element;
-        ++first_unfilled;
+        *m_first_unfilled = element;
+        ++m_first_unfilled;
     }
 
     return *this;
@@ -211,45 +211,45 @@ Vector<T>& Vector<T>::operator=(const Vector<T> &rhs)
     if(this == &rhs)
         return *this;
     
-    delete[] start;
+    delete[] m_start;
 
     capacity = rhs.capacity;
-    start = new T[capacity];
-    // first_unfilled previously pointed to deallocated memory, now points to start
-    first_unfilled = start;
+    m_start = new T[capacity];
+    // m_first_unfilled previously pointed to deallocated memory, now points to m_start
+    m_first_unfilled = m_start;
 
     for(int i = 0; i < rhs.size(); i++)
     {
-        start[i] = rhs.start[i];
+        m_start[i] = rhs.m_start[i];
     }
-    // Have to use other object for size because size() function works by subtracting start from first_unfilled
-    first_unfilled += rhs.size();
+    // Have to use other object for size because size() function works by subtracting m_start from m_first_unfilled
+    m_first_unfilled += rhs.size();
 
     return *this;
 }
 
 /*
-    Destructor. Deallocates the memory beginning at start.
+    Destructor. Deallocates the memory beginning at m_start.
 */
 
 template <typename T>
 Vector<T>::~Vector()
 {   
-    delete[] start;
+    delete[] m_start;
 }
 
 /*
     Move constructor. Copies capacity into the vector and transfers ownership from one vector to another.
-    The moved-from vector's start and first_unfilled pointers are set to nullptr and capacity of 0
+    The moved-from vector's m_start and m_first_unfilled pointers are set to nullptr and capacity of 0
 */
 
 template<typename T>
-Vector<T>::Vector(Vector<T> &&original): capacity{original.capacity}, start{original.start}, 
-first_unfilled{original.first_unfilled}
+Vector<T>::Vector(Vector<T> &&original): capacity{original.capacity}, m_start{original.m_start}, 
+m_first_unfilled{original.m_first_unfilled}
 {
     original.capacity = 0;
-    original.start = nullptr;
-    original.first_unfilled = nullptr;
+    original.m_start = nullptr;
+    original.m_first_unfilled = nullptr;
 }
 
 /*
@@ -265,14 +265,43 @@ Vector<T>& Vector<T>::operator=(Vector<T> &&original)
     // Now same as in move constructor
 
     capacity = original.capacity;
-    start = original.start;
-    first_unfilled = original.first_unfilled;
+    m_start = original.m_start;
+    m_first_unfilled = original.m_first_unfilled;
 
     original.capacity = 0;
-    original.start = nullptr;
-    original.first_unfilled = nullptr;
+    original.m_start = nullptr;
+    original.m_first_unfilled = nullptr;
 
     return *this;    
+}
+
+/*
+    Returns an iterator to the first element in the container;
+*/
+template<typename T>
+Vector<T>::iterator Vector<T>::begin() const {
+    return Iterator{m_start};
+}
+/*
+    Returns an iterator one past the last element in the container
+*/
+template<typename T>
+Vector<T>::iterator Vector<T>::end() const {
+    return Iterator{m_first_unfilled};
+}
+/*
+    Returns a const_iterator to the first element in the container
+*/
+template<typename T>
+Vector<T>::const_iterator Vector<T>::cbegin() const {
+    return Constant_Iterator{m_start};
+}
+/*
+    Returns a const_iterator one past the last element in the container
+*/
+template<typename T>
+Vector<T>::const_iterator Vector<T>::cend() const {
+    return Constant_Iterator{m_first_unfilled};
 }
 
 /*
@@ -284,7 +313,7 @@ Vector<T>& Vector<T>::operator=(Vector<T> &&original)
 template <typename T>
 T& Vector<T>::at(int index) const {
     if(index >= size() || index < 0) throw std::out_of_range("Tried to access element out of range");
-    return *(start + index);
+    return *(m_start + index);
 }
 
 /*
@@ -294,7 +323,7 @@ T& Vector<T>::at(int index) const {
 */
 template <typename T>
 T& Vector<T>::operator[](int index) const {
-    return *(start + index);
+    return *(m_start + index);
 }
 
 /*
@@ -302,7 +331,7 @@ T& Vector<T>::operator[](int index) const {
 */
 template <typename T>
 int Vector<T>::size() const {
-    return first_unfilled - start;
+    return m_first_unfilled - m_start;
 }
 
 template <typename T>
@@ -321,17 +350,17 @@ void Vector<T>::resize()
     capacity = (capacity + 1) * 2;
 
     T* new_begin = new T[capacity];
-    T* new_first_unfilled = new_begin;
+    T* new_m_first_unfilled = new_begin;
 
-    for(; new_first_unfilled != first_unfilled; ++beg)
+    for(; new_m_first_unfilled != m_first_unfilled; ++beg)
     {
-        *new_first_unfilled = *
+        *new_m_first_unfilled = *
     }
 
-    delete[] start;
-    start = new_begin;
+    delete[] m_start;
+    m_start = new_begin;
 
-    first_unfilled = new_first_unfilled;
+    m_first_unfilled = new_m_first_unfilled;
 }
 
 template<typename T>
@@ -339,8 +368,8 @@ void Vector<T>::push_back(const T &element)
 {
     if(size() == capacity) resize();
     
-    *first_unfilled = element;
-    first_unfilled++;
+    *m_first_unfilled = element;
+    m_first_unfilled++;
 }       
 
 template<typename T>
@@ -349,8 +378,8 @@ void Vector<T>::push_back(std::initializer_list<T> elements)
     for(T& element: elements)
     {
         if(size() == capacity) resize();
-        *first_unfilled = element;
-        first_unfilled++;
+        *m_first_unfilled = element;
+        m_first_unfilled++;
     }
 }
         
@@ -360,8 +389,8 @@ void Vector<T>::push_back(const Vector<T> &other)
     for(T& element : other)
     {
         if(size() == capacity) resize();
-        *first_unfilled = element;
-        first_unfilled++;
+        *m_first_unfilled = element;
+        m_first_unfilled++;
     }
 }
 
