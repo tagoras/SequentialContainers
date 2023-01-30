@@ -228,17 +228,31 @@ Vector<T>& Vector<T>::operator=(Vector<T> &&original)
     return *this;    
 }
 
+/*
+    Function for alternative acceess to vector's members.
+    @param: int index - element position to retrieve
+    @return: T& - reference to the element at position index
+    @throws: if index is invalid throws std::out_of_range()
+*/
 template <typename T>
 T& Vector<T>::at(int index) const {
-    if(index >= size()) throw std::out_of_range("Tried to access element out of range");
+    if(index >= size() || index < 0) throw std::out_of_range("Tried to access element out of range");
     return *(start + index);
 }
 
+/*
+    Unsafe way to access vector's elemenets
+    @param: int index - element position to retrieve
+    @return: T& - reference to the element at position index
+*/
 template <typename T>
 T& Vector<T>::operator[](int index) const {
     return *(start + index);
 }
 
+/*
+    Returns the number of the elements in the container.
+*/
 template <typename T>
 int Vector<T>::size() const {
     return first_unfilled - start;
