@@ -121,7 +121,6 @@ class Vector{
         // Capacity Functions
         bool empty() const;
         int size() const; // +
-        int max_size() const;
         void reserve();
         void reserve(int);
         void shrink_to_fit();
@@ -348,6 +347,11 @@ T& Vector<T>::operator[](int index) const {
     return *(m_start + index);
 }
 
+template <typename T>
+bool Vector<T>::empty() const {
+    return m_start == m_first_unfilled;
+}
+
 /*
     Returns the number of the elements in the container.
 */
@@ -403,6 +407,7 @@ void Vector<T>::resize(int count)
     m_first_unfilled = new_m_first_unfilled;
 }
 
+/* Adds an element. First check if the container is full and if it is then resize the container */
 template<typename T>
 void Vector<T>::push_back(const T &element)
 {
@@ -412,6 +417,7 @@ void Vector<T>::push_back(const T &element)
     m_first_unfilled++;
 }       
 
+/* Same as above, but we do this multiple times, checking if the container has been filled each time*/
 template<typename T>
 void Vector<T>::push_back(std::initializer_list<T> elements)
 {
@@ -422,7 +428,8 @@ void Vector<T>::push_back(std::initializer_list<T> elements)
         m_first_unfilled++;
     }
 }
-        
+
+/*Push back all the elements from another vector container into this container*/        
 template<typename T>
 void Vector<T>::push_back(const Vector<T> &other)
 {
