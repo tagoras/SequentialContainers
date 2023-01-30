@@ -181,42 +181,43 @@ Vector<T>& Vector<T>::operator=(const Vector<T> &rhs)
     return *this;
 }
 
+/*
+    Destructor. Deallocates the memory beginning at start.
+*/
+
 template <typename T>
 Vector<T>::~Vector()
 {   
-    // Don't think setting first_unfilled to nullptr is necessary
-    //first_unfilled = nullptr;
     delete[] start;
 }
+
 /*
     Move constructor. Copies capacity into the vector and transfers ownership from one vector to another.
     The moved-from vector's start and first_unfilled pointers are set to nullptr and capacity of 0
 */
-template<typename T>
-Vector<T>::Vector(Vector<T> &&original): capacity{original.capacity}
-{
-    std::cout << "Move constructor applied" << std::endl;
-    start = original.start;
-    first_unfilled = original.first_unfilled;
 
+template<typename T>
+Vector<T>::Vector(Vector<T> &&original): capacity{original.capacity}, start{original.start}, 
+first_unfilled{original.first_unfilled}
+{
     original.capacity = 0;
     original.start = nullptr;
     original.first_unfilled = nullptr;
 }
 
 /*
-    Move assignment operator. Works like ^ move constructor but returns a reference to this object and guards against
+    Move assignment operator. Works like the move constructor but returns a reference to this object and guards against
     self assignment.
 */
 template<typename T>
 Vector<T>& Vector<T>::operator=(Vector<T> &&original)
 {
-    std::cout << "Coppy assignment operator applied" << std::endl;
     if(this == &original)
         return *this;
 
     // Now same as in move constructor
 
+    capacity = original.capacity;
     start = original.start;
     first_unfilled = original.first_unfilled;
 
