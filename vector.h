@@ -152,20 +152,30 @@ Vector<T>& Vector<T>::operator=(const Vector<T> &rhs)
     return *this;
 }
 
+/*
+    Copy assignment with initializer_list.
+
+    @param: std::initialized_list<T> for brace-list initialization
+    @return: the assigneed-to vector
+*/
+
 template<typename T>
 Vector<T>& Vector<T>::operator=(std::initializer_list<T> elements)
 {
     delete[] start;
     
-    capacity = 2 * elements.size();
+    // Add one before multiplying in case vector is assigned to empty list i.e. {}
+    capacity = 2 * (elements.size() + 1);
     start = new T[capacity];
     first_unfilled = start;
 
-    for(T element : elements)
+    for(T& element : elements)
     {
         *first_unfilled = element;
-        first_unfilled++;
+        ++first_unfilled;
     }
+
+    return *this;
 }
 
 template <typename T>
