@@ -6,6 +6,15 @@
 
 namespace custom{
 
+    /*
+        This is a high-level generic vector class that attempts to provide the core functionality that is 
+        provided in the STL Vector container class.
+
+        T* start; denotes the memory location of the first element
+        T* first_unfilled; denotes the memory location of the first empty memory address
+        int capacity; the total amount of elements the container can currently hold
+    */
+
 template<typename T>
 class Vector{
     public:
