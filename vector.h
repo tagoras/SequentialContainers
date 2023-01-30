@@ -124,6 +124,11 @@ first_unfilled{start}
     first_unfilled += original.size();
 }
 
+/*
+    Copy assignment operator. Deallocates the current memory and deep copies each element to the 
+    current vector.
+*/
+
 template<typename T>
 Vector<T>& Vector<T>::operator=(const Vector<T> &rhs)
 {
