@@ -25,9 +25,12 @@ class Iterator{
 
         Iterator operator--(int) {Iterator tmp = *this; --(*this); return tmp;}
 
-        friend bool operator==(const Iterator<T> &lhs, const Iterator<T> &rhs);
-        friend bool operator!=(const Iterator<T> &lhs, const Iterator<T> &rhs);
-    private:
+        template<typename U>
+        friend bool operator==(const Iterator<U> &lhs, const Iterator<U> &rhs);
+
+        template<typename U>
+        friend bool operator!=(const Iterator<U> &lhs, const Iterator<U> &rhs);
+    protected:
         T* m_pointer;
 };
 
@@ -40,6 +43,28 @@ bool operator==(const Iterator<T> &lhs, const Iterator<T> &rhs) {return lhs.m_po
 template<typename T>
 bool operator!=(const Iterator<T> &lhs, const Iterator<T> &rhs) {return lhs.m_pointer != rhs.m_pointer;}
 
+template<typename T>
+class Constant_Iterator : public Iterator<T>{
+    public:
+        Constant_Iterator(T* element_pointer);
+
+        /*
+            For some reason, if the following code tries to do
+            
+            {return *m_pointer}
+            This causes a compilation error "m_pointer was not declared in this scope".
+
+            This is rather weird, as it means that m_pointer does not depend on the template arguments, which, 
+            in my opinion, it does.
+            
+        */
+        const T& operator*() const {return *(this->m_pointer);}
+};
+
+template<typename T>
+Constant_Iterator<T>::Constant_Iterator(T* element_pointer): Iterator<T>{element_pointer} {}
+
+
 /*
     This is a high-level generic vector class that attempts to provide the core functionality that is 
     provided in the STL Vector container class.
@@ -49,16 +74,6 @@ bool operator!=(const Iterator<T> &lhs, const Iterator<T> &rhs) {return lhs.m_po
     int capacity; the total amount of elements the container can currently hold
 */
 
-template<typename T>
-class Constant_Iterator : public Iterator<T>{
-    public:
-        Constant_Iterator(T* element_pointer);
-
-        const T& operator*() const {return *m_pointer;}
-};
-
-template<typename T>
-Constant_Iterator<T>::Constant_Iterator(T* element_pointer): Iterator{element_pointer} {}
 
 template<typename T>
 class Vector{
@@ -73,6 +88,7 @@ class Vector{
         // Copy control members
         Vector() = default; // +
         Vector(std::initializer_list<T>); // +
+        Vector(int);
 
         Vector(const Vector<T> &); // +
         Vector<T>& operator=(std::initializer_list<T>); // +
@@ -107,6 +123,7 @@ class Vector{
         int size() const; // +
         int max_size() const;
         void reserve();
+        void reserve(int);
         void shrink_to_fit();
 
         //Modifiers
@@ -277,30 +294,32 @@ Vector<T>& Vector<T>::operator=(Vector<T> &&original)
 
 /*
     Returns an iterator to the first element in the container;
+
+    P.S As of now I do not understand all the rationale behind typename usage! 2023-01-30
 */
 template<typename T>
-Vector<T>::iterator Vector<T>::begin() const {
+typename Vector<T>::iterator Vector<T>::begin() const {
     return Iterator{m_start};
 }
 /*
     Returns an iterator one past the last element in the container
 */
 template<typename T>
-Vector<T>::iterator Vector<T>::end() const {
+typename Vector<T>::iterator Vector<T>::end() const {
     return Iterator{m_first_unfilled};
 }
 /*
     Returns a const_iterator to the first element in the container
 */
 template<typename T>
-Vector<T>::const_iterator Vector<T>::cbegin() const {
+typename Vector<T>::const_iterator Vector<T>::cbegin() const {
     return Constant_Iterator{m_start};
 }
 /*
     Returns a const_iterator one past the last element in the container
 */
 template<typename T>
-Vector<T>::const_iterator Vector<T>::cend() const {
+typename Vector<T>::const_iterator Vector<T>::cend() const {
     return Constant_Iterator{m_first_unfilled};
 }
 
@@ -335,6 +354,11 @@ int Vector<T>::size() const {
 }
 
 template <typename T>
+void Vector<T>::reserve() {
+
+}
+
+template <typename T>
 std::ostream& operator<<(std::ostream &os, const Vector<T> vec)
 {
     for(int i = 0; i < vec.size(); i++)
@@ -348,19 +372,6 @@ template<typename T>
 void Vector<T>::resize()
 {
     capacity = (capacity + 1) * 2;
-
-    T* new_begin = new T[capacity];
-    T* new_m_first_unfilled = new_begin;
-
-    for(; new_m_first_unfilled != m_first_unfilled; ++beg)
-    {
-        *new_m_first_unfilled = *
-    }
-
-    delete[] m_start;
-    m_start = new_begin;
-
-    m_first_unfilled = new_m_first_unfilled;
 }
 
 template<typename T>
