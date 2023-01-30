@@ -125,34 +125,6 @@ first_unfilled{start}
 }
 
 /*
-    Copy assignment operator. Deallocates the current memory and deep copies each element to the 
-    current vector.
-*/
-
-template<typename T>
-Vector<T>& Vector<T>::operator=(const Vector<T> &rhs)
-{
-    if(this == &rhs)
-        return *this;
-    
-    delete[] start;
-
-    capacity = rhs.capacity;
-    start = new T[capacity];
-    // first_unfilled previously pointed to deallocated memory, now points to start
-    first_unfilled = start;
-
-    for(int i = 0; i < rhs.size(); i++)
-    {
-        start[i] = rhs.start[i];
-    }
-    // Have to use other object for size because size() function works by subtracting start from first_unfilled
-    first_unfilled += rhs.size();
-
-    return *this;
-}
-
-/*
     Copy assignment with initializer_list.
 
     @param: std::initialized_list<T> for brace-list initialization
@@ -174,6 +146,37 @@ Vector<T>& Vector<T>::operator=(std::initializer_list<T> elements)
         *first_unfilled = element;
         ++first_unfilled;
     }
+
+    return *this;
+}
+
+/*
+    Copy assignment operator. Deallocates the current memory and deep copies each element to the 
+    current vector.
+
+    @param: const Vector<T>
+    @return: Vector<T>& - assigned-to vector
+*/
+
+template<typename T>
+Vector<T>& Vector<T>::operator=(const Vector<T> &rhs)
+{
+    if(this == &rhs)
+        return *this;
+    
+    delete[] start;
+
+    capacity = rhs.capacity;
+    start = new T[capacity];
+    // first_unfilled previously pointed to deallocated memory, now points to start
+    first_unfilled = start;
+
+    for(int i = 0; i < rhs.size(); i++)
+    {
+        start[i] = rhs.start[i];
+    }
+    // Have to use other object for size because size() function works by subtracting start from first_unfilled
+    first_unfilled += rhs.size();
 
     return *this;
 }
