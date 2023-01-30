@@ -121,7 +121,6 @@ class Vector{
         // Capacity Functions
         bool empty() const;
         int size() const; // +
-        void reserve();
         void reserve(int);
         void shrink_to_fit();
 
@@ -135,12 +134,12 @@ class Vector{
         T erase(int pos);
         T erase(int m_start, int end);
 
-        void push_back(const T &);
-        void push_back(std::initializer_list<T> elements);
-        void push_back(const Vector<T> &other);
+        void push_back(const T &); // +
+        void push_back(std::initializer_list<T> elements); // +
+        void push_back(const Vector<T> &other); // +
 
         T pop_back();
-        void resize(int count = -1);
+        void resize(int count = -1); // +
 
         void swap(const Vector<T> &other);
 
@@ -348,6 +347,16 @@ T& Vector<T>::operator[](int index) const {
 }
 
 template <typename T>
+T& Vector<T>::front() const {
+    return *m_start;
+}
+
+template <typename T>
+T& Vector<T>::back() const {
+    return *m_first_unfilled;
+}
+
+template <typename T>
 bool Vector<T>::empty() const {
     return m_start == m_first_unfilled;
 }
@@ -361,8 +370,10 @@ int Vector<T>::size() const {
 }
 
 template <typename T>
-void Vector<T>::reserve() {
+void Vector<T>::reserve(int count) {
+    if(count <= capacity) return;
 
+    
 }
 
 template <typename T>
