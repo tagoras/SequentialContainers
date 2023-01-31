@@ -80,10 +80,6 @@ class Vector{
     public:
         using iterator = Iterator<T>;
         using const_iterator = Constant_Iterator<T>;
-
-        int capacity{0};
-        T* m_start{nullptr};
-        T* m_first_unfilled{nullptr};
     
         // Copy control members
         Vector() = default; // +
@@ -121,14 +117,14 @@ class Vector{
         // Capacity Functions
         bool empty() const; // +
         int size() const; // +
-        void reserve(int);
-        void shrink_to_fit();
+        void reserve(int); // +
+        //void shrink_to_fit();
 
         //Modifiers
         void clear();
 
-        void insert(const T &);
-        void insert(std::initializer_list<T> elements);
+        void insert(const_iterator pos,const T &);
+        void insert(const_iterator pos, int count, const T&);
         
         T erase(const T &);
         T erase(int pos);
@@ -145,6 +141,10 @@ class Vector{
 
         template <T>
         friend std::ostream& operator<<(std::ostream &os, const Vector<T> vec);
+    private:
+        int capacity{0};
+        T* m_start{nullptr};
+        T* m_first_unfilled{nullptr};
 };
 
 /*
@@ -398,7 +398,7 @@ std::ostream& operator<<(std::ostream &os, const Vector<T> vec)
 {
     for(int i = 0; i < vec.size(); i++)
     {
-        os << vec[i] << " ";
+        os << vec[i] << std::endl;
     }
     return os;
 }
@@ -433,6 +433,16 @@ void Vector<T>::resize(int count)
 
     m_start = new_m_start;
     m_first_unfilled = new_m_first_unfilled;
+}
+
+template<typename T>
+void Vector<T>::clear()
+{
+    // Running a destructor for each element
+    for(iterator beg = begin(), end = end(); beg != end; beg++)
+    {
+        *beg->~T();
+    }
 }
 
 /* Adds an element. First check if the container is full and if it is then resize the container */
