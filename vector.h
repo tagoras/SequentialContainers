@@ -115,11 +115,11 @@ class Vector{
         //Access Functions
         T& at(int) const; // +
         T& operator[](int) const; // +
-        T& front() const;
-        T& back() const;
+        T& front() const; // +
+        T& back() const; // +
 
         // Capacity Functions
-        bool empty() const;
+        bool empty() const; // +
         int size() const; // +
         void reserve(int);
         void shrink_to_fit();
@@ -369,11 +369,28 @@ int Vector<T>::size() const {
     return m_first_unfilled - m_start;
 }
 
+/*
+    Increases the amount of memory allocated for the vector. If count <= capacity, the function does not do anything.
+    Otherwise, new memory allocation is done and all the elements of the current vector are copied into the new memory space.
+*/
+
 template <typename T>
 void Vector<T>::reserve(int count) {
     if(count <= capacity) return;
 
-    
+    capacity = count;
+    T* new_m_start = new T[capacity];
+    T* new_m_first_unfilled = new_m_start;
+
+    for(const T& element : *this)
+    {
+        *new_m_first_unfilled = element;
+        ++new_m_first_unfilled;
+    }
+    delete m_start;
+
+    m_start = new_m_start;
+    m_first_unfilled = new_m_first_unfilled;
 }
 
 template <typename T>
