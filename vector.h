@@ -122,10 +122,10 @@ class Vector{
         bool empty() const; // +
         int size() const; // +
         void reserve(int); // +
-        void shrink_to_fit();
+        void shrink_to_fit(); // -
 
         //Modifiers
-        void clear();
+        void clear(); // +
 
         void insert(const T &);
         void insert(std::initializer_list<T> elements);
@@ -443,6 +443,13 @@ void Vector<T>::resize(int count)
 
     m_start = new_m_start;
     m_first_unfilled = new_m_first_unfilled;
+}
+
+template<typename T>
+void Vector<T>::clear()
+{
+    delete[] m_start;
+    m_start = m_first_unfilled = nullptr;
 }
 
 /* Adds an element. First check if the container is full and if it is then resize the container */
