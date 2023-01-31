@@ -121,7 +121,7 @@ class Vector{
         // Capacity Functions
         bool empty() const; // +
         int size() const; // +
-        void reserve(int);
+        void reserve(int); // +
         void shrink_to_fit();
 
         //Modifiers
@@ -391,6 +391,16 @@ void Vector<T>::reserve(int count) {
 
     m_start = new_m_start;
     m_first_unfilled = new_m_first_unfilled;
+}
+
+template <typename T>
+void Vector<T>::shrink_to_fit()
+{
+    /*
+        To be implemented. Problem: I have to free the amount of memory being held by the vector to the current size of the vector.
+        However, if I choose to delete all the memory locations between m_first_unfilled (cbegin() + size()) and cend() then will the
+        delete[] m_start; not cause a crash when the destructor is run?
+    */
 }
 
 template <typename T>
