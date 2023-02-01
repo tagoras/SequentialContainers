@@ -121,7 +121,7 @@ class Vector{
         //void shrink_to_fit();
 
         //Modifiers
-        void clear();
+        //void clear();
 
         void insert(const_iterator pos,const T &);
         void insert(const_iterator pos, int count, const T&);
@@ -410,23 +410,18 @@ std::ostream& operator<<(std::ostream &os, const Vector<T> vec)
 template<typename T>
 void Vector<T>::resize(int count)
 {
-    if(count == -1) capacity = (capacity + 1) * 2;
-    else capacity = count;
+    capacity = (capacity + 1) * 2;
 
     T* new_m_start = new T[capacity];
     T* new_m_first_unfilled = new_m_start;
 
     const_iterator beg{cbegin()}, end{cend()};
 
-    // In case the container is truncated, we have to make sure that we do not overflow the allocated memory
-    int k = 0;
-
-    while(beg != end && k < count)
+    while(beg != end)
     {
         *new_m_first_unfilled = *beg;
         ++new_m_first_unfilled;
         ++beg;
-        ++k;
     }
 
     delete[] m_start;
@@ -434,15 +429,30 @@ void Vector<T>::resize(int count)
     m_start = new_m_start;
     m_first_unfilled = new_m_first_unfilled;
 }
+/*
+
+2023-01-31
+As of now I can not write the following function because I do not understand how to deal with the situation where the element is a primitive data type
+and thus does not have a destructor which I could call.
+
 
 template<typename T>
 void Vector<T>::clear()
 {
-    // Running a destructor for each element
-    for(iterator beg = begin(), end = end(); beg != end; beg++)
-    {
-        *beg->~T();
-    }
+    iterator it = begin();
+
+    while(it != end()) it->~T();
+
+    m_first_unfilled = m_start;
+}
+
+
+*/
+
+template<typename T>
+void Vector<T>::insert(const_iterator pos, const T &)
+{
+    
 }
 
 /* Adds an element. First check if the container is full and if it is then resize the container */

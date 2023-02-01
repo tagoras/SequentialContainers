@@ -13,7 +13,13 @@ int main()
         ivec.push_back(i);
     }
 
-    std::cout << ivec << std::endl;
+    for(int &element : ivec)
+    {
+        std::cout << element << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << ivec[10] << std::endl;
 
     return 0;
 }
