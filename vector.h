@@ -300,28 +300,28 @@ Vector<T>& Vector<T>::operator=(Vector<T> &&original)
 */
 template<typename T>
 typename Vector<T>::iterator Vector<T>::begin() const {
-    return Iterator{m_start};
+    return iterator{m_start};
 }
 /*
     Returns an iterator one past the last element in the container
 */
 template<typename T>
 typename Vector<T>::iterator Vector<T>::end() const {
-    return Iterator{m_first_unfilled};
+    return iterator{m_first_unfilled};
 }
 /*
     Returns a const_iterator to the first element in the container
 */
 template<typename T>
 typename Vector<T>::const_iterator Vector<T>::cbegin() const {
-    return Constant_Iterator{m_start};
+    return const_iterator{m_start};
 }
 /*
     Returns a const_iterator one past the last element in the container
 */
 template<typename T>
 typename Vector<T>::const_iterator Vector<T>::cend() const {
-    return Constant_Iterator{m_first_unfilled};
+    return const_iterator{m_first_unfilled};
 }
 
 /*
