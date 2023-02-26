@@ -7,6 +7,9 @@
 
 namespace custom{
 
+// Inspiration on how to write a custom iterator taken from:
+// https://www.internalpointers.com/post/writing-custom-iterators-modern-cpp
+
 template<typename T>
 class Iterator{
     public:
@@ -36,6 +39,9 @@ class Iterator{
 
 template<typename T>
 Iterator<T>::Iterator(T* element_pointer): m_pointer{element_pointer} {}
+
+template<typename T>
+T* Iterator<T>::operator->() { return *m_pointer; }
 
 template<typename T>
 bool operator==(const Iterator<T> &lhs, const Iterator<T> &rhs) {return lhs.m_pointer == rhs.m_pointer;}
@@ -83,7 +89,7 @@ class Vector{
     
         // Copy control members
         Vector() = default; // +
-        Vector(std::initializer_list<T>); // +
+        Vector(const std::initializer_list<T> &); // +
         Vector(int);
 
         Vector(const Vector<T> &); // +
@@ -134,7 +140,7 @@ class Vector{
         void push_back(std::initializer_list<T> elements); // +
         void push_back(const Vector<T> &other); // +
 
-        T pop_back();
+        void pop_back();
         void resize(int count = -1); // +
 
         void swap(const Vector<T> &other);
@@ -142,7 +148,7 @@ class Vector{
         template <T>
         friend std::ostream& operator<<(std::ostream &os, const Vector<T> vec);
     private:
-        int capacity{0};
+        std::size_t capacity{0};
         T* m_start{nullptr};
         T* m_first_unfilled{nullptr};
 };
@@ -155,10 +161,10 @@ class Vector{
 */
 
 template <typename T>
-Vector<T>::Vector(std::initializer_list<T> elements): capacity{elements.size() * 2},
+Vector<T>::Vector(const std::initializer_list<T>& elements): capacity{elements.size() * 2},
     m_start{new T[capacity]}, m_first_unfilled{m_start} 
 {
-    for(T& element : elements)
+    for(const T& element : elements)
     {
         *m_first_unfilled = element;
         ++m_first_unfilled;
@@ -398,7 +404,7 @@ std::ostream& operator<<(std::ostream &os, const Vector<T> vec)
 {
     for(int i = 0; i < vec.size(); i++)
     {
-        os << vec[i] << std::endl;
+        os << vec[i] << " ";
     }
     return os;
 }
@@ -469,7 +475,7 @@ void Vector<T>::push_back(const T &element)
 template<typename T>
 void Vector<T>::push_back(std::initializer_list<T> elements)
 {
-    for(T& element: elements)
+    for(const T& element: elements)
     {
         if(size() == capacity) resize();
         *m_first_unfilled = element;
@@ -487,6 +493,20 @@ void Vector<T>::push_back(const Vector<T> &other)
         *m_first_unfilled = element;
         m_first_unfilled++;
     }
+}
+/*
+    Currently this does not work.
+*/
+template<typename T>
+void Vector<T>::pop_back()
+{
+    if (size() == 0) return;
+
+    T* last_element = m_first_unfilled;
+    
+    --m_first_unfilled;
+
+    delete last_element;
 }
 
 }
