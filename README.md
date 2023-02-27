@@ -5,6 +5,4 @@ I do not know how extensive these classes will be but my main objective is to ge
 
 Finally, I will add unit testing using boost.test library.
 
-!IMPORTANT!
-
-The use of raw pointers in the project is intentional.
+Also, the usage of raw pointers in the project is intentional.
