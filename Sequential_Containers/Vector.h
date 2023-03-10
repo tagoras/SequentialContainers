@@ -46,7 +46,7 @@ namespace custom {
 	Iterator<T>::Iterator(T* element_pointer) : m_pointer{ element_pointer } {}
 
 	template<typename T>
-	T* Iterator<T>::operator->() { return *m_pointer; }
+	T* Iterator<T>::operator->() { return m_pointer; }
 
 	template<typename T>
 	bool operator==(const Iterator<T>& lhs, const Iterator<T>& rhs) { return lhs.m_pointer == rhs.m_pointer; }
@@ -135,9 +135,9 @@ namespace custom {
 		void insert(iterator pos, const T&); // +
 		void insert(iterator pos, int count, const T&); // +
 
-		T erase(const T&);
-		T erase(int pos);
-		T erase(int m_start, int end);
+		iterator erase(const T&);
+		iterator erase(iterator pos);
+		iterator erase(iterator pos, iterator end_pos);
 
 		void push_back(const T&); // +
 		void push_back(std::initializer_list<T> elements); // +
@@ -146,10 +146,10 @@ namespace custom {
 		void pop_back(); // +
 		void resize(int count = -1); // +
 
-		void swap(const Vector<T>& other);
+		void swap(const Vector<T>& other); // +
 
-		template <T>
-		friend std::ostream& operator<<(std::ostream& os, const Vector<T> vec);
+		template <typename T>
+		friend std::ostream& operator<<(std::ostream& os, const Vector<T> vec); // +
 	private:
 		std::size_t capacity{ 0 };
 		T* m_start{ nullptr };
@@ -492,7 +492,42 @@ namespace custom {
 		{
 			insert(pos, T);
 			--count;
+		}	
+	}
+
+	/*
+		Currently it is assumed that this WILL NOT BE RUN ON A BUILT-IN TYPE.
+		Running a destructor on a built-in type causes a runtime crash.
+	*/
+	template<typename T>
+	Iterator<T> Vector<T>::erase(const T& value)
+	{
+		Vector<T>::iterator beg = begin();
+		Vector<T>::iterator last = end();
+		while (beg != last)
+		{
+			if (*beg == value)
+			{
+				if (beg == m_first_unfilled-1)
+				{
+					beg->~T();
+				}
+				else
+				{
+					Vector<T>::iterator start = beg;
+					while (start != end())
+					{
+						*start = *(start + 1);
+						++start;
+					}
+					m_first_unfilled->~T();
+				}
+				--m_first_unfilled;
+				return beg;
+			}
+			++beg;
 		}
+		return end();
 	}
 
 	/* Adds an element. First check if the container is full and if it is then resize the container */
