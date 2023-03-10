@@ -34,4 +34,8 @@ BOOST_AUTO_TEST_CASE(test_insert_single_element)
 	vec.erase("Five");
 	BOOST_TEST(vec.size() == 4);
 	std::cout << vec << std::endl;
+
+	vec.erase(vec.end()-1);
+	vec.erase(vec.begin());
+	std::cout << vec << std::endl;
 }

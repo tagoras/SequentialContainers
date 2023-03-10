@@ -135,7 +135,7 @@ namespace custom {
 		void insert(iterator pos, const T&); // +
 		void insert(iterator pos, int count, const T&); // +
 
-		iterator erase(const T&);
+		iterator erase(const T&); // +
 		iterator erase(iterator pos);
 		iterator erase(iterator pos, iterator end_pos);
 
@@ -528,6 +528,29 @@ namespace custom {
 			++beg;
 		}
 		return end();
+	}
+
+	template<typename T>
+	Iterator<T> Vector<T>::erase(iterator pos)
+	{
+		iterator one_past_last = end();
+		iterator ret = pos;
+
+		pos->~T();
+		while (pos != one_past_last-1)
+		{
+			*pos = *(pos + 1);
+			++pos;
+		}
+		(m_first_unfilled - 1)->~T();
+		--m_first_unfilled;
+		return ret;
+	}
+
+	template<typename T>
+	Iterator<T> Vector<T>::erase(iterator start, iterator end)
+	{
+
 	}
 
 	/* Adds an element. First check if the container is full and if it is then resize the container */
