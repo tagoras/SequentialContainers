@@ -13,6 +13,9 @@ namespace custom {
 	template<typename T>
 	class Iterator {
 	public:
+		/* For iterator, it is a good practise to add tags as they are used extensively in the standard template library.
+		   Omitting them can result in a sub optimal performance for algorithms.
+		*/
 		using iterator_category = std::bidirectional_iterator_tag;
 
 		Iterator(T* element_pointer);
@@ -129,8 +132,8 @@ namespace custom {
 		//Modifiers
 		//void clear();
 
-		void insert(iterator pos, const T&);
-		void insert(iterator pos, int count, const T&);
+		void insert(iterator pos, const T&); // +
+		void insert(iterator pos, int count, const T&); // +
 
 		T erase(const T&);
 		T erase(int pos);
@@ -140,7 +143,7 @@ namespace custom {
 		void push_back(std::initializer_list<T> elements); // +
 		void push_back(const Vector<T>& other); // +
 
-		void pop_back();
+		void pop_back(); // +
 		void resize(int count = -1); // +
 
 		void swap(const Vector<T>& other);
@@ -542,6 +545,18 @@ namespace custom {
 		--m_first_unfilled;
 
 		//delete last_element;
+	}
+
+	template<typename T>
+	void Vector<T>::swap(const Vector<T>& other)
+	{
+		T* temp = other.m_start;
+		other.m_start = m_start;
+		m_start = temp;
+
+		temp = other.m_first_unfilled;
+		other.m_first_unfilled = m_first_unfilled;
+		m_first_unfilled = temp;
 	}
 
 }
