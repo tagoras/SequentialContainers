@@ -485,7 +485,11 @@ namespace custom {
 	template<typename T>
 	void Vector<T>::insert(iterator pos, int count, const T&)
 	{
-
+		while (count)
+		{
+			insert(pos, T);
+			--count;
+		}
 	}
 
 	/* Adds an element. First check if the container is full and if it is then resize the container */
