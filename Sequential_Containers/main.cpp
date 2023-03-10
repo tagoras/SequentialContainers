@@ -27,3 +27,11 @@ BOOST_AUTO_TEST_CASE(test_pop_back)
 	BOOST_TEST(vec.size() == 9);
 }
 
+BOOST_AUTO_TEST_CASE(test_insert_single_element)
+{
+	custom::Vector<int> vec{ 1,2,3,4,5,6,7,8,9,10 };
+	vec.insert(vec.begin(), 100);
+	BOOST_TEST(vec.size() == 11);
+	vec.insert(vec.end(), 100);
+	std::cout << vec << std::endl;
+}

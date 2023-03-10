@@ -28,6 +28,8 @@ namespace custom {
 
 		Iterator operator--(int) { Iterator tmp = *this; --(*this); return tmp; }
 
+		operator T* () const { return m_pointer; }
+
 		template<typename U>
 		friend bool operator==(const Iterator<U>& lhs, const Iterator<U>& rhs);
 
@@ -57,7 +59,7 @@ namespace custom {
 		/*
 			For some reason, if the following code tries to do
 
-			{return *m_pointer}
+			{return *m_pointer;}
 			This causes a compilation error "m_pointer was not declared in this scope".
 			This is rather weird, as it means that m_pointer does not depend on the template arguments, which,
 			in my opinion, it does.
@@ -127,8 +129,8 @@ namespace custom {
 		//Modifiers
 		//void clear();
 
-		void insert(const_iterator pos, const T&);
-		void insert(const_iterator pos, int count, const T&);
+		void insert(iterator pos, const T&);
+		void insert(iterator pos, int count, const T&);
 
 		T erase(const T&);
 		T erase(int pos);
@@ -435,6 +437,9 @@ namespace custom {
 	As of now I can not write the following function because I do not understand how to deal with the situation where the element is a primitive data type
 	and thus does not have a destructor which I could call.
 	template<typename T>
+
+	2023-03-01 Use a simple delete[] m_start; you dumb dumb
+
 	void Vector<T>::clear()
 	{
 		iterator it = begin();
@@ -443,8 +448,42 @@ namespace custom {
 	}
 	*/
 
+	/*
+	*	Inserts an element before the iterator.
+	* 
+		Inserting into vector's arbitrary location causes the need to move the whole container that is to the right by one, which is very
+		inefficient.
+
+		Ideally, you would want to keep the part of the vector up to the iterator and only move the right hand side of the container. However,
+		As I am limited to the basic delete statement, I will deallocate the WHOLE container instead.
+	*/
+
 	template<typename T>
-	void Vector<T>::insert(const_iterator pos, const T&)
+	void Vector<T>::insert(iterator pos, const T& value)
+	{
+		if (size() == capacity) resize();
+		if (pos == m_first_unfilled)
+		{
+			*m_first_unfilled = value;
+			++m_first_unfilled;
+		}
+		else
+		{
+			Vector<T>::iterator end = m_first_unfilled + 1;
+			T to_write = value;
+			while (pos != end)
+			{
+				const T overwritten_value = *pos;
+				*pos = to_write;
+				to_write = overwritten_value;
+				++pos;
+			}
+			++m_first_unfilled;
+		}
+	}
+
+	template<typename T>
+	void Vector<T>::insert(iterator pos, int count, const T&)
 	{
 
 	}
@@ -487,15 +526,15 @@ namespace custom {
 		using T* pointer = new T[size]; you must deallocate using delete[] pointer. That is, you allocate an array and de-allocate an array. You are not allowed to
 		deallocate one element using simple delete statement if you allocated the whole block using an array version of new operator.
 
-		The current "solution" (a very beautiful word to describe what is essentially an intentional was of storage) is to not deallocate memory and just comment out
+		The current "solution" (a very beautiful word to describe what is essentially an intentional waste of storage) is to not deallocate memory and just comment out
 		the last statement which is causing an undefined behaviour.
 	*/
 	template<typename T>
 	void Vector<T>::pop_back()
 	{
 		if (size() == 0) return;
+		
 		T* last_element = m_first_unfilled-1;
-
 		--m_first_unfilled;
 
 		//delete last_element;
