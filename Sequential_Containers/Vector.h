@@ -539,7 +539,8 @@ namespace custom {
 		pos->~T();
 		while (pos != one_past_last-1)
 		{
-			*pos = *(pos + 1);
+			*pos = std::move(*(pos + 1));
+			(pos + 1)->~T();
 			++pos;
 		}
 		(m_first_unfilled - 1)->~T();
@@ -550,7 +551,17 @@ namespace custom {
 	template<typename T>
 	Iterator<T> Vector<T>::erase(iterator start, iterator end)
 	{
-
+		iterator res = start;
+		if (end = end())
+		{
+			while (start != end)
+			{
+				start->~T();
+				++start;
+			}
+			m_first_unfilled -= (end - start);
+		}
+		return res;
 	}
 
 	/* Adds an element. First check if the container is full and if it is then resize the container */
