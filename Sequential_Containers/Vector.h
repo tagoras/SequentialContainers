@@ -561,6 +561,23 @@ namespace custom {
 			}
 			m_first_unfilled -= (end - start);
 		}
+		else
+		{
+			std::size_t distance = end - start;
+			while (start != end)
+			{
+				start->~T();
+				++start;
+			}
+			// Now move the rest of the elements "distance" amount back
+			iterator beg = end + 1, end = end();
+			while (beg != end)
+			{
+				*(beg - distance) = std::move(*beg);
+				beg->~T();
+				++beg;
+			}
+		}
 		return res;
 	}
 
