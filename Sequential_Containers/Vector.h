@@ -13,8 +13,9 @@ namespace custom {
 	template<typename T>
 	class Iterator {
 	public:
-		/* For iterator, it is a good practise to add tags as they are used extensively in the standard template library.
-		   Omitting them can result in a sub optimal performance for algorithms.
+		/* 
+			For iterator, it is a good practise to add tags as they are used extensively in the standard template library.
+			Omitting them can result in a sub optimal performance for algorithms.
 		*/
 		using iterator_category = std::bidirectional_iterator_tag;
 
@@ -93,7 +94,7 @@ namespace custom {
 		// Copy control members
 		Vector() = default; // +
 		Vector(const std::initializer_list<T>&); // +
-		Vector(int);
+		Vector(int); // +
 
 		Vector(const Vector<T>&); // +
 		Vector<T>& operator=(std::initializer_list<T>); // +
@@ -136,8 +137,8 @@ namespace custom {
 		void insert(iterator pos, int count, const T&); // +
 
 		iterator erase(const T&); // +
-		iterator erase(iterator pos);
-		iterator erase(iterator pos, iterator end_pos);
+		iterator erase(iterator pos); // +
+		iterator erase(iterator pos, iterator end_pos); // +
 
 		void push_back(const T&); // +
 		void push_back(std::initializer_list<T> elements); // +
